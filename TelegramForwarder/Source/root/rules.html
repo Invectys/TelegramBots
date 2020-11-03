@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+
+<html lang="ru" >
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Правила</title>
+	<link rel="stylesheet" type="text/css" href="main-css">
+</head>
+<body>
+	<a href="/main"><button class="button button1 w_100" style="margin:4px;">Пересылки</button></a>
+
+	<div class="column rule-name">
+		<label class="text-1">Здесь введите имя вашего нового правила для  создания. </label>
+		<label class="text-1">Если вы хотите редактировать, то введите имя существующего правила</label>
+		<input id="rule_name_input" type="text" name="" value="[rule_name]" placeholder="Здесь имя правила" />
+	</div>
+
+	
+	<div class="container-1">
+		<div class="column-1 rules-1">
+			<label class="container">Удалять ссылки
+				<input id="remove-links" type="checkbox" [remove_links_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Разрешить медиа
+				<input id="allow-media" type="checkbox" [allow_media_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Разрешить картинки
+				<input id="allow-image" type="checkbox" [allow_image_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Разрешить гифки
+				<input id="allow-gif" type="checkbox" [allow_gif_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Разрешить видео
+				<input id="allow-video" type="checkbox" [allow_video_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Разрешить аудио
+				<input id="allow-audio" type="checkbox" [allow_audio_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Запрещать слова(чувств. к регистру)
+				<input id="deny_words_register" type="checkbox" [deny_words_register]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Запрещать слова
+				<input id="deny-words" type="checkbox" [deny_words_en_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Заменять слова(чувств. к регистру)
+				<input id="replace_words_register" type="checkbox" [replace_words_register]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Заменять слова
+				<input id="replace-words" type="checkbox" [replace_words_checked]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Постить только(чувств. к регистру)
+				<input id="repost_only_register" type="checkbox" [repost_only_register]>
+				<span class="checkmark"></span>
+			</label>
+			<label class="container">Постить только
+				<input id="repost_only_enabled" type="checkbox" [repost_only_enabled]>
+				<span class="checkmark"></span>
+			</label>
+		</div>
+		<div>
+			<div>
+				<input id="send_limit_update_time" type="number" value="[update_time]" />
+				Время обновления в секундах
+			</div>
+			<div>
+				<input id="current_send_limit" type="number" value="[send_limit]"/>
+				Лимит пересылок
+			</div>
+		</div>
+		
+	</div>
+	<div class="w_100">
+		Запретить слова Пример: зонтик космонавт щука
+		<textarea id="deny-words-str">[deny-words-text]</textarea>
+	</div>
+	<div class="w_100">
+		Заменять слова Пример: волк=вирус лиса=заяц
+		<textarea id="replace-words-str" >[replace-words-text]</textarea>
+	</div>
+		<div class="w_100">
+		Репостить только
+		<textarea id="repost_only" >[repost_only_text]</textarea>
+	</div>
+	<button onclick="save_settings()" class="button button1 w_100">Сохранить</button>
+</body>
+</html>
+
+<form id="save_form" action="/settings" method="POST" enctype="multipart/form-data" style="display:hidden ">
+	<input type="hidden" class="remove-links" name="remove_links" value="">
+	<input type="hidden" class="media" name="allow_media" value="">
+	<input type="hidden" class="image" name="allow_photo" value="">
+	<input type="hidden" class="gif" name="allow_gif" value="">
+	<input type="hidden" class="video" name="allow_video" value="">
+	<input type="hidden" class="audio" name="allow_audio" value="">
+	<input type="hidden" class="deny-words" name="deny_if_have_word_enabled" value="">
+	<input type="hidden" class="replace-words" name="replace_words_enabled" value="">
+	<input type="hidden" class="deny-words-str" name="deny_if_have_word" value="">
+	<input type="hidden" class="replace-words-str" name="replace_words" value="">
+	<input type="hidden" class="repost_only_enabled" name="repost_only_enabled" value="">
+	<input type="hidden" class="repost_only" name="repost_only" value="">
+
+	<input type="hidden" class="repost_only_register" name="repost_only_register" value="">
+	<input type="hidden" class="deny_words_register" name="deny_words_register" value="">
+	<input type="hidden" class="replace_words_register" name="replace_words_register" value="">
+
+	<input type="hidden" class="current_send_limit" name="current_send_limit" value="">
+	<input type="hidden" class="send_limit_update_time" name="send_limit_update_time" value="">
+
+	<input type="hidden" class="rule_name" name="rule_name" value="">
+</form>
+
+<form id="create_edit_rule_form" action="/createeditrule" method="POST" enctype="multipart/form-data" style="display:hidden ">
+	<input type="hidden" class="rule_name" name="rule_name" value="">
+</form>
+
+<script type="text/javascript">
+
+
+
+window.onload = function()
+{
+
+}
+
+function save_settings()
+{
+	var post_reg = document.getElementById("repost_only_register").checked;
+	var repl_reg = document.getElementById("replace_words_register").checked;
+	var deny_reg = document.getElementById("deny_words_register").checked;
+
+
+	var rl = document.getElementById("remove-links").checked;
+	var am = document.getElementById("allow-media").checked;
+	var ai = document.getElementById("allow-image").checked;
+	var ag = document.getElementById("allow-gif").checked;
+	var av = document.getElementById("allow-video").checked;
+	var aa = document.getElementById("allow-audio").checked;
+	var dw = document.getElementById("deny-words").checked;
+	var rw = document.getElementById("replace-words").checked;
+	var dw_str = document.getElementById("deny-words-str").value;
+	var rw_str = document.getElementById("replace-words-str").value;
+	var ro = document.getElementById("repost_only_enabled").checked;
+	var ro_str = document.getElementById("repost_only").value;
+
+	var sl = document.getElementById("current_send_limit").value;
+	var su = document.getElementById("send_limit_update_time").value;
+
+	var form = document.getElementById("save_form");
+	form.getElementsByClassName("remove-links")[0].value = rl;
+	form.getElementsByClassName("media")[0].value = am;
+	form.getElementsByClassName("image")[0].value = ai;
+	form.getElementsByClassName("gif")[0].value = ag;
+	form.getElementsByClassName("video")[0].value = av;
+	form.getElementsByClassName("audio")[0].value = aa;
+	form.getElementsByClassName("deny-words")[0].value = dw;
+	form.getElementsByClassName("replace-words")[0].value = rw;
+	form.getElementsByClassName("deny-words-str")[0].value = dw_str;
+	form.getElementsByClassName("replace-words-str")[0].value = rw_str;
+	form.getElementsByClassName("repost_only_enabled")[0].value = ro;
+	form.getElementsByClassName("repost_only")[0].value = ro_str;
+
+	form.getElementsByClassName("repost_only_register")[0].value = post_reg;
+	form.getElementsByClassName("replace_words_register")[0].value = repl_reg;
+	form.getElementsByClassName("deny_words_register")[0].value = deny_reg;
+
+	if(sl < 0)
+	{
+		sl  = 100;
+		alert("Лиит сообщений отрицателен");
+		return;
+	}
+	if(su < 5)
+	{
+		su = 100;
+		alert("Время обновления не может быть меньше 5 секунд");
+		return;
+	}
+
+	form.getElementsByClassName("current_send_limit")[0].value = sl;
+	form.getElementsByClassName("send_limit_update_time")[0].value = su;
+
+
+	var ruleName = document.getElementById("rule_name_input").value;
+	if(ruleName == "")
+	{
+		return;
+	}
+	form.getElementsByClassName("rule_name")[0].value = ruleName;
+
+	form.submit();
+}
+
+
+
+
+
+</script>

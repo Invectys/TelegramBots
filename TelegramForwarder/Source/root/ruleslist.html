@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+
+<html lang="ru" >
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Правила</title>
+	<link rel="stylesheet" type="text/css" href="main-css">
+</head>
+<body>
+	<h1>Все правила</h1>
+	<a href="/main"><button class="button button1 w_100" style="margin:4px;">Пересылки</button></a>
+
+	<ol class="rectangle">
+		[rules_list]
+	</ol>
+	<div class="row">
+		<button onclick="edit_rule()" class="button button1 w_50">Редактировать/Создать</button>
+		<button onclick="remove_rule()" class="button button3 w_50">Удалить правило</button>
+	</div>
+
+</body>
+</html>
+
+
+
+
+
+<script type="text/javascript">
+	
+sel_rule = undefined;
+rule_name = "";
+window.onload = function()
+{
+	var list = document.getElementsByClassName("rule_li");
+	for(var i=0; i < list.length;i++)
+	{
+		var item  = list[i];
+		item.onclick = function()
+		{
+			if(sel_rule != undefined)sel_rule.classList.remove("selected");
+			sel_rule = this.getElementsByTagName('a')[0];
+			sel_rule.classList.add("selected");
+			rule_name = sel_rule.dataset.name;
+		}
+	}
+}
+
+function edit_rule()
+{
+	console.log("call");
+	console.log(rule_name);
+
+
+	document.location.href = "rule" + rule_name;
+}
+
+function remove_rule()
+{
+	if(rule_name == "")
+	{
+		return;
+	}
+
+	document.location.href = "removerule" + rule_name;
+}
+</script>

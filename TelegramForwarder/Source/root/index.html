@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+
+<html lang="ru" >
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Пересыльщик</title>
+	<link rel="stylesheet" type="text/css" href="main-css">
+</head>
+<body>
+
+	<a href="/ruleslist"><button class="button button1 w_100">Правила</button></a>
+	<ol class="rectangle">
+		[forwards-list]
+	</ol>
+
+	<div class="row">
+		<button onclick="delete_route()" class="button button3 w_50 ">Удалить</button>
+		<button onclick="delete_all_route()" class="button button3 w_50">Удалить все</button>
+	</div>
+	<br/>
+
+	<div class="row">
+		<div class="dialogs-list col-6">
+			<ol class="rectangle">
+				<li>Отправить отсюда</li>
+				<li><input class="find-dialog-inp w_100" placeholder="поиск" type="text"/></li>
+				[dialogs-from]
+			</ol>
+		</div>
+		<div class="dialogs-list col-6">
+			<ol class="rectangle">
+				<li>Сюда</li>
+				<li><input class="find-dialog-inp w_100" placeholder="поиск" type="text"/></li>
+				[dialogs-to]
+			</ol>
+		</div>
+
+	</div>
+
+<div>Здесь выберите правило</div>
+<select class="w_100 choose_rule">
+	[all-rules-option]
+</select>
+
+<button onclick="add_new_route()" class="button button5 w_100">Добавить</button>
+<button onclick="change_rule()" class="button button5 w_100">Изменить правило</button>
+</body>
+</html>
+
+<form id="add_route_form" action="/routes/add" method="POST" enctype="multipart/form-data" style="display:hidden ">
+	<input type="hidden" class="from_ind" name="from_ind" value="">
+	<input type="hidden" class="to_ind" name="to_ind" value="">
+	<input type="hidden" class="rule_name" name="rule_name" value="">
+</form>
+<form id="delete_route_form" action="/routes/delete" method="POST" enctype="multipart/form-data" style="display:hidden ">
+	<input type="hidden" class="from" name="from" value="">
+	<input type="hidden" class="to" name="to" value="">
+</form>
+
+<form id="change_route_rule" action="/routes/changerule" method="POST" enctype="multipart/form-data" style="display:hidden ">
+	<input type="hidden" class="from" name="from" value="">
+	<input type="hidden" class="to" name="to" value="">
+	<input type="hidden" class="rule" name="rule_name" value="">
+</form>
+
+<script type="text/javascript">
+
+var from_elem,to_elem;
+var from_ind,to_ind = -1;
+var forward_elem;
+
+
+window.onload = function()
+{
+	var from_list = document.getElementsByClassName("from");
+	for(var i=0; i < from_list.length;i++)
+	{
+		var item  = from_list[i];
+		item.onclick = function()
+		{
+			if(from_elem != undefined)from_elem.classList.remove("selected");
+			from_elem = this;
+			from_elem.classList.add("selected");
+			from_ind = this.dataset.ind;
+		}
+	}
+	var from_list = document.getElementsByClassName("to");
+	for(var i=0; i < from_list.length;i++)
+	{
+		var item  = from_list[i];
+		item.onclick = function()
+		{
+			if(to_elem != undefined)to_elem.classList.remove("selected");
+			to_elem = this;
+			to_elem.classList.add("selected");
+			to_ind = this.dataset.ind;
+		}
+	}
+
+	var forward_list = document.getElementsByClassName("forward-elem");
+	for(var i=0; i < forward_list.length;i++)
+	{
+		var item  = forward_list[i];
+		item.onclick = function()
+		{
+			if(forward_elem != undefined)forward_elem.classList.remove("selected");
+			forward_elem = this;
+			forward_elem.classList.add("selected");
+		}
+	}
+
+	var arr = document.getElementsByClassName("find-dialog-inp");
+	for(var i=0; i < arr.length; i++)
+	{
+		var f_inp = arr[i];
+		f_inp.oninput = function()
+		{
+			console.log("input");
+			var val = this.value;
+			var parent = this.parentElement.parentElement;
+			for(var i1=0; i1 < parent.children.length; i1++)
+			{
+				var child = parent.children[i1];
+				if(child.classList.contains("dialog_li"))
+				{
+					var text = child.innerText || child.textContent;
+					var contains = text.includes(val);
+					if(!contains)
+					{
+						child.classList.add("d-none");
+					}
+					else
+					{
+						child.classList.remove("d-none");
+					}
+				}
+			}
+		}
+	}
+}
+
+function add_new_route()
+{
+	
+	if(from_ind == -1 || to_ind == -1)
+		return;
+	var form = document.getElementById("add_route_form");
+	var rule_name = document.getElementsByClassName("choose_rule")[0].value;
+
+	var from_inp = form.getElementsByClassName("from_ind")[0];
+	var to_inp = form.getElementsByClassName("to_ind")[0];
+	var rule_name_form= form.getElementsByClassName("rule_name")[0];
+
+	from_inp.value = from_ind;
+	to_inp.value = to_ind;
+	rule_name_form.value = rule_name;
+
+	form.submit();
+}
+
+function delete_route()
+{
+
+	if(forward_elem == undefined)
+	{
+		return;
+	}
+
+	console.log(forward_elem)
+
+	var from = forward_elem.dataset.from;
+	var to = forward_elem.dataset.to;
+
+	var form = document.getElementById("delete_route_form");
+	var from_inp = form.getElementsByClassName("from")[0];
+	var to_inp = form.getElementsByClassName("to")[0];
+	from_inp.value = from;
+	to_inp.value = to;
+	form.submit();
+
+}
+
+function delete_all_route()
+{
+	console.log("delete all routes");
+	window.location.href = "all/delete";
+}
+
+
+function change_rule()
+{
+	if(forward_elem == undefined)
+	{
+		return;
+	}
+
+	console.log(forward_elem)
+
+	var from = forward_elem.dataset.from;
+	var to = forward_elem.dataset.to;
+
+	var form = document.getElementById("change_route_rule");
+	var from_inp = form.getElementsByClassName("from")[0];
+	var to_inp = form.getElementsByClassName("to")[0];
+	var rule_inp = form.getElementsByClassName("rule")[0];
+	from_inp.value = from;
+	to_inp.value = to;
+	var rule_name = document.getElementsByClassName("choose_rule")[0].value;
+	rule_inp.value = rule_name;
+	form.submit();
+}
+</script>
