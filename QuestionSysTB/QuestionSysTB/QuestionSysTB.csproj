@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>b6869ff8-3a6b-419c-a0b2-19b2b27b3286</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="certificate.pfx" />
+    <None Remove="YOURPUBLIC.pem" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="certificate.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="YOURPUBLIC.pem">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.9" />
+    <PackageReference Include="Qiwi.BillPayments" Version="0.1.5" />
+    <PackageReference Include="Telegram.Bot" Version="15.7.1" />
+  </ItemGroup>
+
+
+</Project>
