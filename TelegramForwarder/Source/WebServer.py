@@ -271,7 +271,7 @@ class requestHandler(BaseHTTPRequestHandler):
 			if ctype == "multipart/form-data":
 				fields = cgi.parse_multipart(self.rfile,pdict)
 
-				print(fields)
+				#print(fields)
 
 				remove_links = get_fieled(fields,'remove_links')
 				allow_media = get_fieled(fields,'allow_media')
