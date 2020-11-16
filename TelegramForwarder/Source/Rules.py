@@ -50,10 +50,12 @@ def init():
 	load_roules()
 
 def change_val(key,val):
+	global rules
 	rules[key] = val
 	save_rules()
 
 def remove_rule(rule_name):
+	global rules
 	del rules[rule_name]
 	save_rules()
 
@@ -67,10 +69,26 @@ def get_val(key):
 	return rules[key]
 
 def save_rules():
+	global rules
 	with cc.open(rules_file_path,"w",code) as rules_f:
+		rules = keys_to_string(rules)
 		str_json = json.dumps(rules,ensure_ascii=ascii)
 		#print(str_json)
 		rules_f.write(str_json)
+
+def keys_to_string(mydict):
+	for key in mydict.keys():
+		if type(key) is not str:
+			try:
+				mydict[str(key)] = mydict[key]
+			except:
+				try:
+					mydict[repr(key)] = mydict[key]
+				except:
+					pass
+			del mydict[key]
+	return mydict
+
 
 def save_replace_word(text):
 	global replace_words
@@ -160,6 +178,7 @@ def load_roules():
 			rules_cur["repost_only_register"] = False
 			rules_cur["deny_words_register"] = False
 			rules_cur["replace_words_register"] = False
+			rules = keys_to_string(rules)
 			str_json = json.dumps(rules,ensure_ascii=ascii)
 			rules_f.write(str_json)
 
@@ -202,6 +221,24 @@ def apply_rules_to_msg(rule_name,cur_send,message):
 	if current_send_limit != -1:
 		if current_send_count >= current_send_limit:
 			print("Достигнут лимит по отправке сообщений Ждем обновления")
+			return None
+	#post only	
+	if repost_only_enabled:
+		flag = False
+		for word in repost_only:
+			if word == "":
+				continue
+			regex = find_word_regex.format(word)
+			matchs = list()
+			#print("repost only register = ",repost_only_register)
+			if not repost_only_register:
+				matchs = re.search(regex,message.message,flags=re.IGNORECASE)
+			else:
+				matchs = re.search(regex,message.message)
+			if matchs != None:
+				flag = True
+		if not flag:
+			print("Нету нужного слова")
 			return None
 	#deny words		
 	if deny_if_have_word_enabled:
@@ -248,24 +285,7 @@ def apply_rules_to_msg(rule_name,cur_send,message):
 			return None
 		if allow_video == False and utils.is_video(media):
 			return None
-	#post only	
-	if repost_only_enabled:
-		flag = False
-		for word in repost_only:
-			if word == "":
-				continue
-			regex = find_word_regex.format(word)
-			matchs = list()
-			print("repost only register = ",repost_only_register)
-			if not repost_only_register:
-				matchs = re.search(regex,message.message,flags=re.IGNORECASE)
-			else:
-				matchs = re.search(regex,message.message)
-			if matchs != None:
-				flag = True
-		if not flag:
-			print("Нету нужного слова")
-			return None
+	
 
 	return message
 

@@ -205,7 +205,8 @@ def request_page(self):
 
 
 
-
+def get_fieled(fields,key):
+	return fields.get(key)[0].decode("utf-8")
 
 
 class requestHandler(BaseHTTPRequestHandler):
@@ -221,9 +222,9 @@ class requestHandler(BaseHTTPRequestHandler):
 			pdict['CONTENT-LENGTH'] = content_len
 			if ctype == "multipart/form-data":
 				fields = cgi.parse_multipart(self.rfile,pdict)
-				from_id = int(fields.get('from')[0])
-				to_id = int(fields.get('to')[0])
-				rule_name = fields.get('rule_name')[0]
+				from_id = int(get_fieled(fields,'from'))
+				to_id = int(get_fieled(fields,'to'))
+				rule_name = get_fieled(fields,'rule_name')
 				print("Изменение правила для маршрута");
 				fr.change_rule(rule_name,from_id,to_id)
 			self.send_response(301)
@@ -238,9 +239,9 @@ class requestHandler(BaseHTTPRequestHandler):
 			#print(ctype)
 			if ctype == "multipart/form-data":
 				fields = cgi.parse_multipart(self.rfile,pdict)
-				from_ind = int(fields.get('from_ind')[0])
-				to_ind = int(fields.get('to_ind')[0])
-				rule_name = fields.get('rule_name')[0]
+				from_ind = int(get_fieled(fields,'from_ind'))
+				to_ind = int(get_fieled(fields,'to_ind'))
+				rule_name = get_fieled(fields,'rule_name')
 				print("Добавление нового правила = ",rule_name);
 				fr.add_route(rule_name,from_ind,to_ind)
 			self.send_response(301)
@@ -254,8 +255,8 @@ class requestHandler(BaseHTTPRequestHandler):
 			pdict['CONTENT-LENGTH'] = content_len
 			if ctype == "multipart/form-data":
 				fields = cgi.parse_multipart(self.rfile,pdict)
-				from_id = int(fields.get('from')[0])
-				to_id = int(fields.get('to')[0])
+				from_id = int(get_fieled(fields,'from'))
+				to_id = int(get_fieled(fields,'to'))
 				fr.remove_route(from_id,to_id)
 			self.send_response(301)
 			self.send_header('content-type','text/html')
@@ -270,27 +271,31 @@ class requestHandler(BaseHTTPRequestHandler):
 			if ctype == "multipart/form-data":
 				fields = cgi.parse_multipart(self.rfile,pdict)
 
-				remove_links = fields.get('remove_links')[0]
-				allow_media = fields.get('allow_media')[0]
-				allow_photo = fields.get('allow_photo')[0]
-				allow_gif = fields.get('allow_gif')[0]
-				allow_video = fields.get('allow_video')[0]
-				allow_audio = fields.get('allow_audio')[0]
-				deny_if_have_word_enabled = fields.get('deny_if_have_word_enabled')[0]
-				replace_words_enabled = fields.get('replace_words_enabled')[0]
-				deny_if_have_word = fields.get('deny_if_have_word')[0]
-				replace_words = fields.get('replace_words')[0]
-				repost_only_enabled= fields.get('repost_only_enabled')[0]
-				repost_only = fields.get('repost_only')[0]
+				print(fields)
 
-				repost_only_register = fields.get('repost_only_register')[0]
-				deny_words_register = fields.get('deny_words_register')[0]
-				replace_words_register = fields.get('replace_words_register')[0]
+				remove_links = get_fieled(fields,'remove_links')
+				allow_media = get_fieled(fields,'allow_media')
+				allow_photo = get_fieled(fields,'allow_photo')
+				allow_gif = get_fieled(fields,'allow_gif')
+				allow_video = get_fieled(fields,'allow_video')
+				allow_audio = get_fieled(fields,'allow_audio')
+				deny_if_have_word_enabled = get_fieled(fields,'deny_if_have_word_enabled')
+				replace_words = get_fieled(fields,'replace_words')
+				replace_words_enabled = get_fieled(fields,'replace_words_enabled')
+				deny_if_have_word = get_fieled(fields,'deny_if_have_word')
+				repost_only_enabled= get_fieled(fields,'repost_only_enabled')
+				repost_only = get_fieled(fields,'repost_only')
 
-				rule_name = fields.get('rule_name')[0]
+				repost_only_register = get_fieled(fields,'repost_only_register')
+				deny_words_register = get_fieled(fields,'deny_words_register')
+				replace_words_register = get_fieled(fields,'replace_words_register')
 
-				send_limit = fields.get('current_send_limit')[0]
-				update_time = fields.get('send_limit_update_time')[0]
+				rule_name = get_fieled(fields,'rule_name')
+
+				print("RuleName = ",rule_name);
+
+				send_limit = get_fieled(fields,'current_send_limit')
+				update_time = get_fieled(fields,'send_limit_update_time')
 
 				r.set_val(rule_name,"repost_only_register",repost_only_register == "true");
 				r.set_val(rule_name,"deny_words_register",deny_words_register == "true");
