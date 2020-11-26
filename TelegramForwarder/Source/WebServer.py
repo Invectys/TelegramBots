@@ -172,6 +172,10 @@ def request_page(self):
 			output = output.replace("[repost_only_enabled]","checked")
 		else:
 			output = output.replace("[repost_only_enabled]","")
+		if r_cur["deny_text"]:
+			output = output.replace("[deny_text]","checked")
+		else:
+			output = output.replace("[deny_text]","")
 
 		output = output.replace("[update_time]",str(r_cur["max_send_limit_update_time_in_seconds"]))
 		output = output.replace("[send_limit]",str(r_cur["max_send_limit"]))
@@ -285,6 +289,7 @@ class requestHandler(BaseHTTPRequestHandler):
 				deny_if_have_word = get_fieled(fields,'deny_if_have_word')
 				repost_only_enabled= get_fieled(fields,'repost_only_enabled')
 				repost_only = get_fieled(fields,'repost_only')
+				deny_text = get_fieled(fields,'deny_text')
 
 				repost_only_register = get_fieled(fields,'repost_only_register')
 				deny_words_register = get_fieled(fields,'deny_words_register')
@@ -309,6 +314,7 @@ class requestHandler(BaseHTTPRequestHandler):
 
 				r.set_val(rule_name,"remove_links",remove_links == "true")
 				#print("-------------------",remove_links)
+				r.set_val(rule_name,"deny_text",deny_text == "true")
 				r.set_val(rule_name,"allow_media",allow_media == "true")
 				r.set_val(rule_name,"allow_photo",allow_photo == "true")
 				r.set_val(rule_name,"allow_gif",allow_gif == "true")

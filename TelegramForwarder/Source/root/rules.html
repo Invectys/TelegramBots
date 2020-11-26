@@ -44,6 +44,10 @@
 				<input id="allow-audio" type="checkbox" [allow_audio_checked]>
 				<span class="checkmark"></span>
 			</label>
+			<label class="container">Запретить текст
+				<input id="deny_text" type="checkbox" [deny_text]>
+				<span class="checkmark"></span>
+			</label>
 			<label class="container">Запрещать слова(чувств. к регистру)
 				<input id="deny_words_register" type="checkbox" [deny_words_register]>
 				<span class="checkmark"></span>
@@ -111,6 +115,8 @@
 	<input type="hidden" class="repost_only_enabled" name="repost_only_enabled" value="">
 	<input type="hidden" class="repost_only" name="repost_only" value="">
 
+	<input type="hidden" class="deny_text" name="deny_text" value="">
+
 	<input type="hidden" class="repost_only_register" name="repost_only_register" value="">
 	<input type="hidden" class="deny_words_register" name="deny_words_register" value="">
 	<input type="hidden" class="replace_words_register" name="replace_words_register" value="">
@@ -139,7 +145,7 @@ function save_settings()
 	var post_reg = document.getElementById("repost_only_register").checked;
 	var repl_reg = document.getElementById("replace_words_register").checked;
 	var deny_reg = document.getElementById("deny_words_register").checked;
-
+	var deny_text = document.getElementById("deny_text").checked;
 
 	var rl = document.getElementById("remove-links").checked;
 	var am = document.getElementById("allow-media").checked;
@@ -170,6 +176,7 @@ function save_settings()
 	form.getElementsByClassName("replace-words-str")[0].value = rw_str;
 	form.getElementsByClassName("repost_only_enabled")[0].value = ro;
 	form.getElementsByClassName("repost_only")[0].value = ro_str;
+	form.getElementsByClassName("deny_text")[0].value = deny_text;
 
 	form.getElementsByClassName("repost_only_register")[0].value = post_reg;
 	form.getElementsByClassName("replace_words_register")[0].value = repl_reg;
@@ -193,6 +200,7 @@ function save_settings()
 
 
 	var ruleName = document.getElementById("rule_name_input").value;
+	ruleName = ruleName.replace(/\s+/g, '');
 	if(ruleName == "")
 	{
 		return;

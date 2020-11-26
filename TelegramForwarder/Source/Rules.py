@@ -36,6 +36,7 @@ deny_if_have_word = list()
 deny_if_have_strings_enabled = True
 deny_if_have_strings_register_sensetive = False
 deny_if_have_strings = list()
+deny_text = False
 
 repost_only_enabled = False
 repost_only = list()
@@ -105,6 +106,7 @@ def save_deny_word(text):
 
 def load_roules():
 	print("Обновление правил фильтрации")
+	global deny_text
 	global repost_only
 	global repost_only_enabled
 	global rules
@@ -150,6 +152,7 @@ def load_roules():
 			replace_words_enabled = rules_cur["replace_words_enabled"]
 			repost_only_enabled = rules_cur["repost_only_enabled"]
 			repost_only = rules_cur["repost_only"]
+			deny_text = rules_cur["deny_text"]
 			#print("loaded = ",repost_only)
 	except:
 		with cc.open(rules_file_path,"w",code) as rules_f:
@@ -178,6 +181,7 @@ def load_roules():
 			rules_cur["repost_only_register"] = False
 			rules_cur["deny_words_register"] = False
 			rules_cur["replace_words_register"] = False
+			rules_cur["deny_text"] = deny_text
 			rules = keys_to_string(rules)
 			str_json = json.dumps(rules,ensure_ascii=ascii)
 			rules_f.write(str_json)
@@ -216,6 +220,8 @@ def apply_rules_to_msg(rule_name,cur_send,message):
 	repost_only = get_rule(rule_name,"repost_only")
 	repost_only_enabled = get_rule(rule_name,"repost_only_enabled")
 	repost_only_register = get_rule(rule_name,"repost_only_register")
+	global deny_text
+	deny_text = get_rule(rule_name,"deny_text")
 
 	#count check
 	if current_send_limit != -1:
@@ -223,7 +229,7 @@ def apply_rules_to_msg(rule_name,cur_send,message):
 			print("Достигнут лимит по отправке сообщений Ждем обновления")
 			return None
 	#post only	
-	if repost_only_enabled:
+	if repost_only_enabled and not deny_text:
 		flag = False
 		for word in repost_only:
 			if word == "":
@@ -241,7 +247,7 @@ def apply_rules_to_msg(rule_name,cur_send,message):
 			print("Нету нужного слова")
 			return None
 	#deny words		
-	if deny_if_have_word_enabled:
+	if deny_if_have_word_enabled and not deny_text:
 		message_to_check = message.message
 		if deny_words_register == False:
 			message_to_check = message_to_check.upper()
@@ -257,7 +263,7 @@ def apply_rules_to_msg(rule_name,cur_send,message):
 				return None
 	#print("Заменять слова = ",replace_words_enabled)
 	#replace words
-	if replace_words_enabled:
+	if replace_words_enabled and not deny_text:
 		for key in replace_words:
 			to_word = replace_words[key]
 			key_check = key
@@ -286,6 +292,9 @@ def apply_rules_to_msg(rule_name,cur_send,message):
 		if allow_video == False and utils.is_video(media):
 			return None
 	
+	if deny_text and not (utils.is_image(media) or utils.is_gif(media) or utils.is_audio(media) or utils.is_video(media)):
+		print("Пересылка чистого текста запрещена")
+		return None
 
 	return message
 
